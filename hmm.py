@@ -40,13 +40,13 @@ class Model(object):
         self._emit_prob = _normalize_prob_two_dim(emit_prob, self._states, self._symbols)
 
     def states(self):
-        return self._states[:]
+        return set(self._states)
 
     def states_number(self):
         return len(self._states)
 
     def symbols(self):
-        return self._symbols[:]
+        return set(self._symbols)
 
     def symbols_number(self):
         return len(self._symbols)

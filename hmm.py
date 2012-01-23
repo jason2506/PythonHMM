@@ -110,3 +110,15 @@ class Model(object):
 
         return beta
 
+    def evaluate(self, sequence):
+        length = len(sequence)
+        if length == 0:
+            return 0
+
+        prob = 0
+        alpha = self._forward(sequence)
+        for state in alpha[length - 1]:
+            prob += alpha[length - 1][state]
+
+        return prob
+

@@ -24,4 +24,5 @@ sequence = ['walk', 'shop', 'clean', 'clean', 'walk', 'walk', 'walk', 'clean']
 model = Model(states, symbols, start_prob, trans_prob, emit_prob)
 
 print model.evaluate(sequence)
+print model.decode(sequence)
 

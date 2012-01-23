@@ -27,10 +27,7 @@ def _normalize_prob_two_dim(prob, item_set1, item_set2):
             result[item] = _normalize_prob(None, item_set2)
     else:
         for item in item_set1:
-            if item in prob:
-                result[item] = _normalize_prob(prob[item], item_set2)
-            else:
-                result[item] = _normalize_prob(None, item_set2)
+            result[item] = _normalize_prob(prob.get(item), item_set2)
 
     return result
 

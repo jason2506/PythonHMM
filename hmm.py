@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from itertools import izip
+from math import log
+
 def _normalize_prob(prob, item_set):
     result = {}
     if prob is None:
@@ -30,6 +33,63 @@ def _normalize_prob_two_dim(prob, item_set1, item_set2):
             result[item] = _normalize_prob(prob.get(item), item_set2)
 
     return result
+
+def _count(item, count):
+    if item not in count:
+        count[item] = 0
+    count[item] += 1
+
+def _count_two_dim(item1, item2, count):
+    if item1 not in count:
+        count[item1] = {}
+    _count(item2, count[item1])
+
+def _get_init_model(sequences):
+    symbol_count = {}
+    state_count = {}
+    state_symbol_count = {}
+    state_start_count = {}
+    state_trans_count = {}
+
+    for state_list, symbol_list in sequences:
+        pre_state = None
+        for state, symbol in izip(state_list, symbol_list):
+            _count(state, state_count)
+            _count(symbol, symbol_count)
+            _count_two_dim(state, symbol, state_symbol_count)
+            if pre_state is None:
+                _count(state, state_start_count)
+            else:
+                _count_two_dim(pre_state, state, state_trans_count)
+            pre_state = state
+
+    return Model(state_count.keys(), symbol_count.keys(),
+        state_start_count, state_trans_count, state_symbol_count)
+
+def train(sequences, delta=0.0001):
+    model = _get_init_model(sequences)
+    length = len(sequences)
+
+    old_likelihood = 0
+    for _, symbol_list in sequences:
+        old_likelihood += log(model.evaluate(symbol_list))
+
+    old_likelihood /= length
+
+    while True:
+        new_likelihood = 0
+        for _, symbol_list in sequences:
+            model.learn(symbol_list)
+            new_likelihood += log(model.evaluate(symbol_list))
+
+        new_likelihood /= length
+
+        if abs(new_likelihood - old_likelihood) < delta:
+            break
+
+        old_likelihood = new_likelihood
+
+    return model
 
 class Model(object):
     def __init__(self, states, symbols, start_prob=None, trans_prob=None, emit_prob=None):

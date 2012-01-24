@@ -212,8 +212,8 @@ class Model(object):
                 gamma_sum += gamma[index][state]
 
             if gamma_sum > 0:
-                xi_sum = 0
                 for state_to in self._states:
+                    xi_sum = 0
                     for index in xrange(length - 1):
                         xi_sum += xi[index][state][state_to]
                     self._trans_prob[state][state_to] = xi_sum / gamma_sum

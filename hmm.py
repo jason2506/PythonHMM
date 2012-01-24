@@ -66,7 +66,7 @@ def _get_init_model(sequences):
     return Model(state_count.keys(), symbol_count.keys(),
         state_start_count, state_trans_count, state_symbol_count)
 
-def train(sequences, delta=0.0001):
+def train(sequences, delta=0.0001, smoothing=0):
     model = _get_init_model(sequences)
     length = len(sequences)
 
@@ -79,7 +79,7 @@ def train(sequences, delta=0.0001):
     while True:
         new_likelihood = 0
         for _, symbol_list in sequences:
-            model.learn(symbol_list)
+            model.learn(symbol_list, smoothing)
             new_likelihood += log(model.evaluate(symbol_list))
 
         new_likelihood /= length
@@ -222,7 +222,7 @@ class Model(object):
 
         return result
 
-    def learn(self, sequence):
+    def learn(self, sequence, smoothing=0):
         length = len(sequence)
         alpha = self._forward(sequence)
         beta = self._backward(sequence)
@@ -262,9 +262,12 @@ class Model(object):
                 for state_to in self._states:
                     xi[index][state_from][state_to] /= prob_sum
 
+        states_number = len(self._states)
+        symbols_number = len(self._symbols)
         for state in self._states:
             # update start probability
-            self._start_prob[state] = gamma[0][state]
+            self._start_prob[state] = \
+                (smoothing + gamma[0][state]) / (1 + states_number * smoothing)
 
             # update transition probability
             gamma_sum = 0
@@ -272,11 +275,12 @@ class Model(object):
                 gamma_sum += gamma[index][state]
 
             if gamma_sum > 0:
+                denominator = gamma_sum + states_number * smoothing
                 for state_to in self._states:
                     xi_sum = 0
                     for index in xrange(length - 1):
                         xi_sum += xi[index][state][state_to]
-                    self._trans_prob[state][state_to] = xi_sum / gamma_sum
+                    self._trans_prob[state][state_to] = (smoothing + xi_sum) / denominator
             else:
                 for state_to in self._states:
                     self._trans_prob[state][state_to] = 0
@@ -291,8 +295,10 @@ class Model(object):
                 emit_gamma_sum[sequence[index]] += gamma[index][state]
 
             if gamma_sum > 0:
+                denominator = gamma_sum + symbols_number * smoothing
                 for symbol in self._symbols:
-                    self._emit_prob[state][symbol] = emit_gamma_sum[symbol] / gamma_sum
+                    self._emit_prob[state][symbol] = \
+                        (smoothing + emit_gamma_sum[symbol]) / denominator
             else:
                 for symbol in self._symbols:
                     self._emit_prob[state][symbol] = 0

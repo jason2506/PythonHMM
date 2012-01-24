@@ -7,7 +7,7 @@ def _normalize_prob(prob, item_set):
         for item in item_set:
             result[item] = 1.0 / number
     else:
-        prob_sum = 0
+        prob_sum = 0.0
         for item in item_set:
             prob_sum += prob.get(item, 0)
 

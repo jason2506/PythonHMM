@@ -190,8 +190,8 @@ class Model(object):
                 xi[index][state_from] = {}
                 for state_to in self._states:
                     prob = alpha[index][state_from] * beta[index + 1][state_to] * \
-                        self._trans_prob[state_from][state_to] * \
-                        self._emit_prob[state_to][sequence[index + 1]]
+                        self.trans_prob(state_from, state_to) * \
+                        self.emit_prob(state_to, sequence[index + 1])
                     xi[index][state_from][state_to] = prob
                     prob_sum += prob
 

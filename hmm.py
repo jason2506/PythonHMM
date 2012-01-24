@@ -233,5 +233,5 @@ class Model(object):
                     self._emit_prob[state][symbol] = emit_gamma_sum[symbol] / gamma_sum
             else:
                 for symbol in self._symbols:
-                    self._emit_prob[state][emission] = 0
+                    self._emit_prob[state][symbol] = 0
 

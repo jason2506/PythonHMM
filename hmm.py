@@ -13,7 +13,7 @@ def _normalize_prob(prob, item_set):
 
         if prob_sum > 0:
             for item in item_set:
-                result[item] = prob[item] / prob_sum
+                result[item] = prob.get(item, 0) / prob_sum
         else:
             for item in item_set:
                 result[item] = 0

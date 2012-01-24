@@ -162,3 +162,76 @@ class Model(object):
 
         return result
 
+    def learn(self, sequence):
+        length = len(sequence)
+        alpha = self._forward(sequence)
+        beta = self._backward(sequence)
+
+        gamma = []
+        for index in xrange(length):
+            prob_sum = 0
+            gamma.append({})
+            for state in self._states:
+                prob = alpha[index][state] * beta[index][state]
+                gamma[index][state] = prob
+                prob_sum += prob
+
+            if prob_sum == 0:
+                continue
+
+            for state in self._states:
+                gamma[index][state] /= prob_sum
+
+        xi = []
+        for index in xrange(length - 1):
+            prob_sum = 0
+            xi.append({})
+            for state_from in self._states:
+                xi[index][state_from] = {}
+                for state_to in self._states:
+                    prob = alpha[index][state_from] * beta[index + 1][state_to] * \
+                        self._trans_prob[state_from][state_to] * \
+                        self._emit_prob[state_to][sequence[index]]
+                    xi[index][state_from][state_to] = prob
+                    prob_sum += prob
+
+            if prob_sum == 0:
+                continue
+
+            for state_from in self._states:
+                for state_to in self._states:
+                    xi[index][state_from][state_to] /= prob_sum
+
+        for state in self._states:
+            # update start probability
+            self._start_prob[state] = gamma[0][state]
+
+            # update transition probability
+            gamma_sum = 0
+            for index in xrange(length - 1):
+                gamma_sum += gamma[index][state]
+
+            if gamma_sum > 0:
+                xi_sum = 0
+                for state_to in self._states:
+                    for index in xrange(length - 1):
+                        xi_sum += xi[index][state][state_to]
+                    self._trans_prob[state][state_to] = xi_sum / gamma_sum
+            else:
+                for state_to in self._states:
+                    self._trans_prob[state][state_to] = 0
+
+            # update emission probability
+            emit_gamma_sum = {}
+            for index in xrange(length):
+                if sequence[index] not in emit_gamma_sum:
+                    emit_gamma_sum[sequence[index]] = 0
+                emit_gamma_sum[sequence[index]] += gamma[index][state]
+
+            if gamma_sum > 0:
+                for symbol in self._symbols:
+                    self._emit_prob[state][symbol] = emit_gamma_sum[symbol] / gamma_sum
+            else:
+                for symbol in self._symbols:
+                    self._emit_prob[state][emission] = 0
+

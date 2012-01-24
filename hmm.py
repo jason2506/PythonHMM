@@ -222,6 +222,7 @@ class Model(object):
                     self._trans_prob[state][state_to] = 0
 
             # update emission probability
+            gamma_sum += gamma[length - 1][state]
             emit_gamma_sum = {}
             for index in xrange(length):
                 if sequence[index] not in emit_gamma_sum:
@@ -234,4 +235,10 @@ class Model(object):
             else:
                 for symbol in self._symbols:
                     self._emit_prob[state][symbol] = 0
+
+        print '---'
+        print self._start_prob
+        print self._trans_prob
+        print self._emit_prob
+        print '---'
 

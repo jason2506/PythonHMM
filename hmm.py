@@ -99,6 +99,10 @@ class Model(object):
         self._trans_prob = _normalize_prob_two_dim(trans_prob, self._states, self._states)
         self._emit_prob = _normalize_prob_two_dim(emit_prob, self._states, self._symbols)
 
+    def __repr__(self):
+        return '{name}({_states}, {_symbols}, {_start_prob}, {_trans_prob}, {_emit_prob})' \
+            .format(name=self.__class__.__name__, **self.__dict__)
+
     def states(self):
         return set(self._states)
 

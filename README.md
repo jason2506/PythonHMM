@@ -8,7 +8,7 @@
 
 To use **PythonHMM**, you must import the `hmm` module.
 
-    from hmm import Model
+    import hmm
 
 Then, you can create an instance of `Model` by passing the states, symbols, and (option) probability matrices.
 
@@ -30,7 +30,7 @@ Then, you can create an instance of `Model` by passing the states, symbols, and 
         'sunny': { 'walk' : 0.6, 'shop' : 0.3, 'clean' : 0.1 }
     }
 
-    model = Model(states, symbols, start_prob, trans_prob, emit_prob)
+    model = hmm.Model(states, symbols, start_prob, trans_prob, emit_prob)
 
 Now, you can evaluate and decode the given sequence:
 
@@ -41,8 +41,6 @@ Now, you can evaluate and decode the given sequence:
 
 You can also using the given sequences (a list of *(state list, symbol list)* pair) to train a model:
 
-    from hmm import train
-
     sequences = [
         (state_list1, symbol_list1),
         (state_list2, symbol_list2),
@@ -50,7 +48,7 @@ You can also using the given sequences (a list of *(state list, symbol list)* pa
         (state_listN, symbol_listN),
     ]
 
-    model = train(sequences)
+    model = hmm.train(sequences)
 
 The `train` function also have a optional `delta` argument (which is defaults to 0.0001). This argument is used to specify that the learning algorithm will stop when the difference of the log-likelihood between two consecutive iterations is less than `delta`.
 

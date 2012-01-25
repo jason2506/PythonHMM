@@ -10,7 +10,7 @@ To use **PythonHMM**, you must import the `hmm` module.
 
     import hmm
 
-Then, you can create an instance of `Model` by passing the states, symbols, and (option) probability matrices.
+Then, you can create an instance of `Model` by passing the states, symbols, and (optional) probability matrices.
 
     states = ('rainy', 'sunny')
     symbols = ('walk', 'shop', 'clean')

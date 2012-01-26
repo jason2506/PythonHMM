@@ -50,7 +50,11 @@ You can also using the given sequences (a list of *(state list, symbol list)* pa
 
     model = hmm.train(sequences)
 
-The `train` function also have a optional `delta` argument (which is defaults to 0.0001). This argument is used to specify that the learning algorithm will stop when the difference of the log-likelihood between two consecutive iterations is less than `delta`.
+The `train` function also has two optional arguments, `delta` and `smoothing`.
+
+The `delta` argument (which is defaults to 0.0001) specifies that the learning algorithm will stop when the difference of the log-likelihood between two consecutive iterations is less than `delta`.
+
+The `smoothing` argument (which is defaults to 0) is the smoothing parameter of the [additive smoothing](http://en.wikipedia.org/wiki/Additive_smoothing) to avoid zero probability.
 
 ## License
 

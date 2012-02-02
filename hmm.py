@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# Copyright (c) 2012, Chi-En Wu
 
 from itertools import izip
 from math import log
@@ -67,6 +68,17 @@ def _get_init_model(sequences):
         state_start_count, state_trans_count, state_symbol_count)
 
 def train(sequences, delta=0.0001, smoothing=0):
+    """
+    Use the given sequences to train a HMM model.
+
+    The `delta` argument (which is defaults to 0.0001) specifies that the
+    learning algorithm will stop when the difference of the log-likelihood
+    between two consecutive iterations is less than delta.
+
+    The `smoothing` argument is used to avoid zero probability,
+    see :py:meth:`~hmm.Model.learn`.
+    """
+
     model = _get_init_model(sequences)
     length = len(sequences)
 
@@ -92,6 +104,16 @@ def train(sequences, delta=0.0001, smoothing=0):
     return model
 
 class Model(object):
+    """
+    This class implement the Hidden Markov Model.
+
+    The instance of this class can be created by passing the given states,
+    symbols and optional probability matrices.
+
+    If any of the probability matrices are not given, the missing matrics
+    will be set to the initial uniform probability.
+    """
+
     def __init__(self, states, symbols, start_prob=None, trans_prob=None, emit_prob=None):
         self._states = set(states)
         self._symbols = set(symbols)
@@ -104,28 +126,50 @@ class Model(object):
             .format(name=self.__class__.__name__, **self.__dict__)
 
     def states(self):
+        """ Return the state set of this model. """
         return set(self._states)
 
     def states_number(self):
+        """ Return the number of states. """
         return len(self._states)
 
     def symbols(self):
+        """ Return the symbol set of this model. """
         return set(self._symbols)
 
     def symbols_number(self):
+        """ Return the number of symbols. """
         return len(self._symbols)
 
     def start_prob(self, state):
+        """
+        Return the start probability of the given state.
+
+        If `state` is not contained in the state set of this model, 0 is returned.
+        """
         if state not in self._states:
             return 0
         return self._start_prob[state]
 
     def trans_prob(self, state_from, state_to):
+        """
+        Return the probability that transition from state `state_from` to
+        state `state_to`.
+
+        If either of the given states are not contained in the state set of
+        this model, 0 is returned.
+        """
         if state_from not in self._states or state_to not in self._states:
             return 0
         return self._trans_prob[state_from][state_to]
 
     def emit_prob(self, state, symbol):
+        """
+        Return the emission probability for `symbol` associated with the `state`.
+
+        If either of the `state` and `symbol` are not contained in this model,
+        0 is returned.
+        """
         if state not in self._states or symbol not in self._symbols:
             return 0
         return self._emit_prob[state][symbol]
@@ -172,6 +216,7 @@ class Model(object):
         return beta
 
     def evaluate(self, sequence):
+        """ Evaluate the given sequence.  """
         length = len(sequence)
         if length == 0:
             return 0
@@ -184,6 +229,12 @@ class Model(object):
         return prob
 
     def decode(self, sequence):
+        """
+        Decode the given sequence.
+
+        This method is an implementation of the
+        `Viterbi algorithm <http://en.wikipedia.org/wiki/Viterbi_algorithm>`_.
+        """
         sequence_length = len(sequence)
         if sequence_length == 0:
             return []
@@ -227,6 +278,15 @@ class Model(object):
         return result
 
     def learn(self, sequence, smoothing=0):
+        """
+        Use the given `sequence` to find the best state transition and
+        emission probabilities.
+
+        The optional `smoothing` argument (which is defaults to 0) is the
+        smoothing parameter of the
+        `additive smoothing <http://en.wikipedia.org/wiki/Additive_smoothing>`_
+        to avoid zero probability.
+        """
         length = len(sequence)
         alpha = self._forward(sequence)
         beta = self._backward(sequence)

@@ -70,6 +70,8 @@ def _get_init_model(sequences):
 def train(sequences, delta=0.0001, smoothing=0):
     """
     Use the given sequences to train a HMM model.
+    This method is an implementation of the `EM algorithm
+    <http://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm>`_.
 
     The `delta` argument (which is defaults to 0.0001) specifies that the
     learning algorithm will stop when the difference of the log-likelihood
@@ -105,7 +107,7 @@ def train(sequences, delta=0.0001, smoothing=0):
 
 class Model(object):
     """
-    This class implement the Hidden Markov Model.
+    This class is an implementation of the Hidden Markov Model.
 
     The instance of this class can be created by passing the given states,
     symbols and optional probability matrices.
@@ -156,8 +158,8 @@ class Model(object):
         Return the probability that transition from state `state_from` to
         state `state_to`.
 
-        If either of the given states are not contained in the state set of
-        this model, 0 is returned.
+        If either the `state_from` or the `state_to` are not contained in the
+        state set of this model, 0 is returned.
         """
         if state_from not in self._states or state_to not in self._states:
             return 0
@@ -167,7 +169,7 @@ class Model(object):
         """
         Return the emission probability for `symbol` associated with the `state`.
 
-        If either of the `state` and `symbol` are not contained in this model,
+        If either the `state` or the `symbol` are not contained in this model,
         0 is returned.
         """
         if state not in self._states or symbol not in self._symbols:
@@ -216,7 +218,11 @@ class Model(object):
         return beta
 
     def evaluate(self, sequence):
-        """ Evaluate the given sequence.  """
+        """
+        Use the `forward algorithm
+        <http://en.wikipedia.org/wiki/Forward%E2%80%93backward_algorithm>`_
+        to evaluate the given sequence.
+        """
         length = len(sequence)
         if length == 0:
             return 0

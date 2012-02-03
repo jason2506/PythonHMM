@@ -57,7 +57,7 @@
 <dl class="class">
 <dt id="hmm.Model">
 <em class="property">class </em><tt class="descclassname">hmm.</tt><tt class="descname">Model</tt><big>(</big><em>states</em>, <em>symbols</em>, <em>start_prob=None</em>, <em>trans_prob=None</em>, <em>emit_prob=None</em><big>)</big><a class="headerlink" href="#hmm.Model" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class implement the Hidden Markov Model.</p>
+<dd><p>This class is an implementation of the Hidden Markov Model.</p>
 <p>The instance of this class can be created by passing the given states,
 symbols and optional probability matrices.</p>
 <p>If any of the probability matrices are not given, the missing matrics
@@ -74,14 +74,15 @@ will be set to the initial uniform probability.</p>
 <dt id="hmm.Model.emit_prob">
 <tt class="descname">emit_prob</tt><big>(</big><em>state</em>, <em>symbol</em><big>)</big><a class="headerlink" href="#hmm.Model.emit_prob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the emission probability for <cite>symbol</cite> associated with the <cite>state</cite>.</p>
-<p>If either of the <cite>state</cite> and <cite>symbol</cite> are not contained in this model,
+<p>If either the <cite>state</cite> or the <cite>symbol</cite> are not contained in this model,
 0 is returned.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="hmm.Model.evaluate">
 <tt class="descname">evaluate</tt><big>(</big><em>sequence</em><big>)</big><a class="headerlink" href="#hmm.Model.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the given sequence.</p>
+<dd><p>Use the <a class="reference external" href="http://en.wikipedia.org/wiki/Forward%E2%80%93backward_algorithm">forward algorithm</a>
+to evaluate the given sequence.</p>
 </dd></dl>
 
 <dl class="method">
@@ -131,8 +132,8 @@ to avoid zero probability.</p>
 <tt class="descname">trans_prob</tt><big>(</big><em>state_from</em>, <em>state_to</em><big>)</big><a class="headerlink" href="#hmm.Model.trans_prob" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the probability that transition from state <cite>state_from</cite> to
 state <cite>state_to</cite>.</p>
-<p>If either of the given states are not contained in the state set of
-this model, 0 is returned.</p>
+<p>If either the <cite>state_from</cite> or the <cite>state_to</cite> are not contained in the
+state set of this model, 0 is returned.</p>
 </dd></dl>
 
 </dd></dl>
@@ -140,7 +141,8 @@ this model, 0 is returned.</p>
 <dl class="function">
 <dt id="hmm.train">
 <tt class="descclassname">hmm.</tt><tt class="descname">train</tt><big>(</big><em>sequences</em>, <em>delta=0.0001</em>, <em>smoothing=0</em><big>)</big><a class="headerlink" href="#hmm.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Use the given sequences to train a HMM model.</p>
+<dd><p>Use the given sequences to train a HMM model.
+This method is an implementation of the <a class="reference external" href="http://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm">EM algorithm</a>.</p>
 <p>The <cite>delta</cite> argument (which is defaults to 0.0001) specifies that the
 learning algorithm will stop when the difference of the log-likelihood
 between two consecutive iterations is less than delta.</p>

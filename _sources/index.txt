@@ -22,3 +22,9 @@ License
 
 .. literalinclude:: ../../LICENSE
 
+Contribute
+----------
+
+Found a bug? Have a good idea for improving PythonHMM?
+
+Head over to `PythonHMM's github <https://github.com/jason2506/PythonHMM>`_ page and create a new ticket or fork.

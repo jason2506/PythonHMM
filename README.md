@@ -1,8 +1,6 @@
 # PythonHMM
 
-## Overview
-
-**PythonHMM** is the implementation of the [Hidden Markov Model](http://en.wikipedia.org/wiki/Hidden_Markov_model).
+**PythonHMM** is a python implementation of the [Hidden Markov Model](http://en.wikipedia.org/wiki/Hidden_Markov_model).
 
 ## Usage
 
